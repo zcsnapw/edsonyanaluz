@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Boda de Edson y Ana</title>
+    
+    <!-- FUENTES DE LETRA -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Great+Vibes&family=Montserrat:wght@300;400;600&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    
+    <!-- ICONOS Y HERRAMIENTAS DE DISEÑO -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <audio id="bg-music" src="audio/thousand.mp3" preload="auto"></audio>
+
+    <!-- CONFIGURACIÓN DE COLORES -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        gold: { 100: '#F9F1D8', 300: '#E6C888', 500: '#C5A059', 700: '#8A6E36' },
+                        cream: '#FDFBF7',
+                        dark: '#2C2C2C'
+                    },
+                    fontFamily: {
+                        serif: ['"Playfair Display"', 'serif'],
+                        script: ['"Great Vibes"', 'cursive'],
+                        sans: ['"Montserrat"', 'sans-serif'],
+                        title: ['"Cinzel"', 'serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- ESTILOS CSS (DISEÑO) -->
+    <style>
+        /* Estilos generales */
+        body {
+            background-color: #FDFBF7;
+            overflow-x: hidden;
+        }
+
+        /* --- Animación del Sobre --- */
+        #envelope-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background: url('https://img.freepik.com/vector-gratis/fondo-patron-floral-plateado_53876-118841.jpg?semt=ais_hybrid&w=740&q=80') center/cover no-repeat;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 50;
+            transition: opacity 1s ease-in-out, visibility 1s;
+        }
+
+        .envelope-wrapper {
+            position: relative;
+            width: 300px;
+            height: 200px;
+            cursor: pointer;
+            transition: transform 0.5s;
+        }
+        
+        .envelope-wrapper:hover { transform: scale(1.02); }
+
+        .envelope {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            background: #e0ded8;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+
+        /* Partes del sobre */
+        .flap {
+            position: absolute;
+            width: 0;
+            height: 0;
+            z-index: 20;
+        }
+
+        .flap.top {
+            top: 0; left: 0;
+            border-left: 150px solid transparent;
+            border-right: 150px solid transparent;
+            border-top: 110px solid #C5A059;
+            transform-origin: top;
+            transition: transform 0.8s ease-in-out, z-index 0.2s 0.4s;
+            z-index: 25;
+        }
+
+        .flap.right { top: 0; right: 0; border-top: 100px solid transparent; border-bottom: 100px solid transparent; border-right: 150px solid #d1cfc7; }
+        .flap.bottom { bottom: 0; left: 0; border-left: 150px solid transparent; border-right: 150px solid transparent; border-bottom: 110px solid #dedcd5; z-index: 20; }
+        .flap.left { top: 0; left: 0; border-top: 100px solid transparent; border-bottom: 100px solid transparent; border-left: 150px solid #d1cfc7; }
+
+        /* Sello */
+        .wax-seal {
+            position: absolute; top: 40%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 50px; height: 50px;
+            background: radial-gradient(circle at 30% 30%, #a83232, #5a1212);
+            border-radius: 50%;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+            z-index: 30;
+            display: flex; justify-content: center; align-items: center;
+            color: #dcb360; font-family: 'Great Vibes', cursive; font-size: 24px;
+            border: 2px solid #7a1f1f;
+            cursor: pointer;
+            transition: opacity 0.5s;
+        }
+
+        /* Tarjeta interior */
+        .letter {
+            position: absolute; top: 10px; left: 10px; right: 10px; bottom: 10px;
+            background: white; z-index: 10;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            text-align: center; padding: 20px;
+            transition: transform 0.8s ease-in-out;
+            box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
+        }
+
+        /* Estados de animación */
+        .open-envelope .flap.top { transform: rotateX(180deg); z-index: 1; }
+        .open-envelope .wax-seal { opacity: 0; }
+        .open-envelope .letter { transform: translateY(-120px); z-index: 30; }
+
+        /* Animación Fade In */
+        .fade-in-section { opacity: 0; transform: translateY(30px); transition: opacity 1s ease-out, transform 1s ease-out; }
+        .fade-in-section.is-visible { opacity: 1; transform: none; }
+
+        .gold-text-shadow { text-shadow: 1px 1px 2px rgba(197, 160, 89, 0.3); }
+        
+        .btn-gold {
+            background: linear-gradient(135deg, #C5A059 0%, #E6C888 100%);
+            color: white; transition: all 0.3s ease;
+        }
+        .btn-gold:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(197, 160, 89, 0.4); }
+    </style>
+</head>
+<body class="antialiased text-dark">
+    
+    <audio id="bg-music" src="audio/thousand.mp3" preload="auto"></audio>
+
+    <!-- 1. PANTALLA INICIAL: SOBRE -->
+    <div id="envelope-container">
+        <div class="text-center w-full absolute top-[15%] text-gold-100 font-serif tracking-widest text-sm animate-pulse">
+            TOCA EL SELLO
+        </div>
+        
+        <div class="envelope-wrapper" onclick="openInvitation()">
+            <div class="envelope" id="envelope">
+                <div class="flap top"></div>
+                <div class="flap right"></div>
+                <div class="flap bottom"></div>
+                <div class="flap left"></div>
+                <div class="wax-seal">E&A</div>
+                
+                <div class="letter bg-white">
+                    <h2 class="font-script text-3xl text-gold-500 mb-2">Reserva la fecha</h2>
+                    <p class="font-serif text-sm uppercase tracking-widest">Edson & Ana</p>
+                    <p class="text-xs mt-4 text-gray-400">20 . 12 . 2025</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. CONTENIDO PRINCIPAL -->
+    <main id="main-content" class="hidden opacity-0 transition-opacity duration-1000">
+        
+        <!-- ENCABEZADO -->
+        <header class="min-h-screen flex flex-col justify-center items-center text-center p-6 relative overflow-hidden bg-[url('https://images.unsplash.com/photo-1519741497674-611481863552?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80')] bg-cover bg-center">
+            <div class="absolute inset-0 bg-white/80 backdrop-blur-sm"></div>
+
+            <div class="relative z-10 max-w-2xl mx-auto fade-in-section">
+                <p class="font-serif text-gray-600 italic mb-4 text-lg">Después de esperar, soñar y construir juntos… <br >ha llegado el momento de celebrar nuestro amor.</p>
+                
+            </div>
+            <div class="relative z-10 max-w-2xl mx-auto fade-in-section">
+                <p class="font-serif text-gray-600 italic mb-4">Con la bendición de Dios y nuestros padres</p>
+                
+                <h1 class="font-title text-5xl md:text-7xl text-gold-700 mb-4 gold-text-shadow">
+                    Edson <span class="font-script text-6xl text-gold-500">&</span> Ana Luz
+                </h1>
+
+                <div class="relative z-10 max-w-2xl mx-auto fade-in-section">
+                <p class="font-serif text-gray-600 italic mb-4">Bienvenido a un día que marcará nuestras vidas.</p>
+                <h4 class="font-script text-5xl text-gold-500 mb-4">Nuestra Boda y Bautizo de Nuestro Hijo</h4>
+                <p class="font-serif text-gray-750 italic mb-4">Con inmensa alegría, queremos compartir contigo el inicio de nuestra nueva historia. <br> Estás oficialmente invitado a nuestra boda y al bautizo de nuestro hijo.</p>
+               <h4 class="text-3xl md:text-5xl font-serif text-gold-700 mb-4 border-y border-gold-300 py-8 inline-block w-full max-w-lg">Angel Isaac Revollo Velarde</h4>
+                </div>
+                
+                <div>
+                    <p class="text-gold-700 font-serif italic mb-2 text-lg">EL BAUTIZO DE NUESTRO HIJO</p>
+                    <p class="font-serif text-gray-600 italic mb-4">Te esperamos para acompañarnos en este dia especial que se llevara acabo:</p>
+                    <p class="text-gold-700 font-serif italic mb-2 text-lg">El día Sabado 20 de Diciembre a horas 14:00 pm.</p>
+                    <p class="uppercase tracking-wide font-medium">Templo San Juan Bautista</p>
+                    <a href="https://maps.app.goo.gl/XdGphj78M4mv9ozq9" target="_blank" class="inline-flex items-center gap-2 px-8 py-4 border border-gold-500 text-gold-700 hover:bg-gold-500 hover:text-white rounded-full transition-colors font-sans text-sm uppercase tracking-wide">
+                        <i data-lucide="map-pin" class="w-4 h-4"></i> Ver Ubicación
+                    </a>
+                </div>
+                <div class="my-12 h-1 w-32 mx-auto bg-gradient-to-r from-gold-300 via-gold-500 to-gold-300 rounded-full shadow-lg"></div>
+                <div>
+                     <p class="text-gold-700 font-serif italic mb-2 text-lg">Pasada la misa tenemos el honor de invitarte a nuestra Boda de Civil.</p>
+                     <div>
+                    <h5 class="font-title text-3xl md:text-5xl text-gold-700 mb-4 gold-text-shadow">
+                    Edson Revollo <span class="font-script text-lg text-gold-500">&</span> Ana Luz Velarde
+                    </h5>
+
+                    <p class="text-gold-700 font-serif italic mb-2 text-lg">NUESTROS PADRES
+                     </p>
+                </div>
+                </div>
+                
+                <!-- PADRES -->
+                <div class="grid md:grid-cols-2 gap-8 text-sm font-sans text-gray-600 mb-8 mt-8 border-t border-b border-gold-300 py-6">
+                        <div>
+                        <p class="text-gold-700 font-serif italic mb-2 text-lg">Padres del Novio</p>
+                        <p class="uppercase tracking-wide font-medium">Sabino Revollo Camacho</p>
+                        <p class="uppercase tracking-wide font-medium">Mery Villarroel Cuellar</p>
+                    </div>
+                    <div>
+                        <p class="text-gold-700 font-serif italic mb-2 text-lg">Padres de la Novia</p>
+                        <p class="uppercase tracking-wide font-medium">Angel Velarde Vargas</p>
+                        <p class="uppercase tracking-wide font-medium">Savina Perez Camacho</p>
+                    </div>
+                </div>
+
+                <button onclick="document.getElementById('fecha').scrollIntoView({behavior: 'smooth'})" class="animate-bounce mt-4">
+                    <i data-lucide="chevron-down" class="w-10 h-10 text-gold-500"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- FECHA -->
+        <section id="fecha" class="py-20 bg-cream text-center px-4">
+            <div class="max-w-3xl mx-auto fade-in-section">
+                <i data-lucide="calendar-heart" class="w-12 h-12 text-gold-500 mx-auto mb-6"></i>
+                <h2 class="font-title text-3xl md:text-4xl text-dark mb-6">El Gran Día</h2>
+                <p class="text-gold-700 font-serif italic mb-2 text-lg">Te esperamos para acompañarnos en el instante más especial: cuando un ‘Sí, acepto’ abrirá un nuevo capítulo.</p>
+                <div class="text-3xl md:text-5xl font-serif text-gold-700 mb-4 border-y border-gold-300 py-8 inline-block w-full max-w-lg">Sábado, 20 diciembre 2025</div>
+                <p class="font-sans uppercase tracking-widest text-gray-500 mb-12 text-xl">Horas 16:00 pm</p>
+                <p class="text-gold-700 font-serif italic mb-2 text-lg">FALTAN:</p>
+
+                <!-- CUENTA REGRESIVA -->
+                <div id="countdown-container" class="grid grid-cols-4 gap-2 md:gap-4 max-w-lg mx-auto font-serif text-gold-700">
+                    <div class="bg-white p-3 shadow-md rounded-lg">
+                        <span id="days" class="block text-2xl md:text-4xl font-bold">14</span>
+                        <span class="text-xs">DÍAS</span>
+                    </div>
+                    <div class="bg-white p-3 shadow-md rounded-lg">
+                        <span id="hours" class="block text-2xl md:text-4xl font-bold">00</span>
+                        <span class="text-xs">HS</span>
+                    </div>
+                    <div class="bg-white p-3 shadow-md rounded-lg">
+                        <span id="minutes" class="block text-2xl md:text-4xl font-bold">48</span>
+                        <span class="text-xs">MIN</span>
+                    </div>
+                    <div class="bg-white p-3 shadow-md rounded-lg">
+                        <span id="seconds" class="block text-2xl md:text-4xl font-bold">00</span>
+                        <span class="text-xs">SEG</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- LUGAR -->
+        <section class="py-20 bg-white px-4">
+            <div class="max-w-4xl mx-auto">
+                <div class="text-center p-10 border border-gold-100 rounded-xl shadow-lg bg-cream fade-in-section relative overflow-hidden">
+                    <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-gold-300 via-gold-500 to-gold-300"></div>
+
+                    <div class="w-20 h-20 bg-white rounded-full flex items-center justify-center mx-auto mb-6 shadow-md border border-gold-100">
+                        <img src="https://cdn-icons-png.flaticon.com/512/931/931949.png" class="w-10 h-10 opacity-80" alt="Copa">
+                    </div>
+                    
+                    <h3 class="font-title text-3xl text-gold-700 mb-2">Celebración & Fiesta</h3>
+                    <p class="font-serif italic text-gray-500 mb-6">Local de Eventos</p>
+                    
+                    <h4 class="font-script text-5xl text-gold-500 mb-4">"Sueños e Ilusiones"</h4>
+                    <p class="font-sans text-gray-600 mb-8 px-4 text-lg">
+                        Calle Juan Manuel Sánchez y Victoria
+                    </p>
+                    
+                    <a href="https://maps.app.goo.gl/VLi17ybeL3VjzLDQ6" target="_blank" class="inline-flex items-center gap-2 px-8 py-4 border border-gold-500 text-gold-700 hover:bg-gold-500 hover:text-white rounded-full transition-colors font-sans text-sm uppercase tracking-wide">
+                        <i data-lucide="map-pin" class="w-4 h-4"></i> Ver Ubicación
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- CONFIRMACIÓN -->
+        <section id="rsvp" class="py-24 bg-[url('https://images.unsplash.com/photo-1520854221256-17451cc330e7?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80')] bg-fixed bg-cover bg-center relative px-4">
+            <div class="absolute inset-0 bg-dark/60"></div>
+            
+            <div class="relative z-10 max-w-lg mx-auto bg-white/95 backdrop-blur-sm p-10 rounded-xl text-center shadow-2xl fade-in-section">
+                <h2 class="font-script text-5xl text-gold-500 mb-4">Confirmación</h2>
+                <p class="font-serif text-gray-700 mb-8 leading-relaxed">
+                    Tu presencia hace la diferencia. <br> Por favor, confírmanos tu asistencia.
+                </p>
+                
+                <a href="https://wa.me/59178310882" target="_blank" class="btn-gold px-8 py-4 rounded-full font-bold uppercase tracking-widest inline-flex items-center gap-3 shadow-lg hover:scale-105 transform transition">
+                    <i data-lucide="message-circle" class="w-6 h-6"></i>
+                    Confirmar por WhatsApp
+                </a>
+            </div>
+        </section>
+
+        <!-- PIE DE PÁGINA -->
+        <footer class="bg-cream py-12 text-center px-4">
+            <div class="fade-in-section">
+                <h2 class="font-title text-3xl text-gold-700 mb-4">Edson & Ana Luz</h2>
+                <div class="text-xs text-gray-400 font-sans tracking-widest">6 DE DICIEMBRE DE 2025</div>
+            </div>
+        </footer>
+
+    </main>
+
+    <!-- SCRIPTS (LÓGICA) -->
+    <script>
+        lucide.createIcons();
+
+                // 1. ABRIR SOBRE
+        function openInvitation() {
+            const container = document.getElementById('envelope-container');
+            const envelope = document.getElementById('envelope');
+            const mainContent = document.getElementById('main-content');
+
+            // 🔊 Reproducir música al abrir el sobre
+            const music = document.getElementById('bg-music');
+            music.volume = 0.6; // volumen elegante
+            music.play().catch(err => console.log("Autoplay bloqueado hasta que haya interacción."));
+
+            envelope.classList.add('open-envelope');
+
+            setTimeout(() => {
+                container.style.opacity = '0';
+                container.style.visibility = 'hidden';
+                mainContent.classList.remove('hidden');
+                setTimeout(() => {
+                    mainContent.classList.remove('opacity-0');
+                    mainContent.classList.add('opacity-100');
+                }, 100);
+            }, 1500);
+        }
+
+
+        // 2. CUENTA REGRESIVA
+        const weddingDate = new Date(2025, 11, 20, 16, 0, 0).getTime();
+
+        const countdownFunction = setInterval(function() {
+            const now = new Date().getTime();
+            const distance = weddingDate - now;
+
+            const daysEl = document.getElementById("days");
+            const hoursEl = document.getElementById("hours");
+            const minsEl = document.getElementById("minutes");
+            const secsEl = document.getElementById("seconds");
+
+            if (distance > 0) {
+                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                if(daysEl) daysEl.innerHTML = days < 10 ? '0' + days : days;
+                if(hoursEl) hoursEl.innerHTML = hours < 10 ? '0' + hours : hours;
+                if(minsEl) minsEl.innerHTML = minutes < 10 ? '0' + minutes : minutes;
+                if(secsEl) secsEl.innerHTML = seconds < 10 ? '0' + seconds : seconds;
+            } else {
+                clearInterval(countdownFunction);
+                const container = document.getElementById("countdown-container");
+                if(container) container.innerHTML = '<div class="col-span-4 text-3xl text-gold-500 font-bold animate-pulse text-center w-full">¡Llegó el gran día!</div>';
+            }
+        }, 1000);
+
+        // 3. ANIMACIONES SCROLL
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.fade-in-section').forEach(section => {
+            observer.observe(section);
+        });
+    </script>
+</body>
+</html>
